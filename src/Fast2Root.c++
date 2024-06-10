@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     ss << setw(4) << setfill('0') << subrun_number;
     filename = filename_base + "_" + ss.str() + ".fast";
     reader = faster_file_reader_open(filename.c_str());
-  }        cout << detector->GetName() << endl;
+  }     
 
   faster_file_reader_close(reader);
   F2RInfo("End of reading");

@@ -124,7 +124,7 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
         if (line.empty())
             continue;
 
-        istringstream iss(line);        cout << detector->GetName() << endl;
+        istringstream iss(line);    
 
         string token;
         iss >> token;
