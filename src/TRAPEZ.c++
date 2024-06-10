@@ -3,6 +3,8 @@
 
 TRAPEZ::TRAPEZ(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : Detector(Name, Label, Coder, file, TOTAL_TIME)
 {
+    SetRangesFromFile();
+    
     Channel = new TH1D((Name + "_Channel").c_str(), (Name + "_Channel").c_str(), BIN, MIN, MAX);
     Time = new TH1D((Name + "_Time").c_str(), (Name + "_Time").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     PileUp = new TH1D((Name + "_PileUp").c_str(), (Name + "_PileUp").c_str(), BIN, MIN, MAX);

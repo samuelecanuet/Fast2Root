@@ -64,6 +64,7 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
 ## Version
 - v2.0 Basic Reader with QDC and CRRC4 implemented
 - v2.1 Adding TRAPEZ
+- v2.2 Support multifast files
 
 ## AUTOR
 *Samuel Lecanuet lp2iB*

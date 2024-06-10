@@ -2,6 +2,8 @@
 
 QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : Detector(Name, Label, Coder, file, TOTAL_TIME)
 {
+    SetRangesFromFile();
+
     if (Coder == QDC_X1_TYPE_ALIAS)
         QDC_NB = 1;
     else if (Coder == QDC_X2_TYPE_ALIAS)

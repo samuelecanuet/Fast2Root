@@ -89,7 +89,7 @@ int Detector::SetRangesFromFile()
         }
     }
     inputfile.close();
-    F2RError(NAME + " not in setup file !");
+    F2RError(NAME + " not in Range_Input.txt file !");
     exit(0);
 }
 

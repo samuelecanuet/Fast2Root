@@ -14,6 +14,7 @@
 #include <ctime>
 #include <iomanip>
 #include <filesystem>
+#include <sys/stat.h>
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -44,7 +45,6 @@ struct ChannelInfo
     string name;
     int label;
     int coder;
-    int dspNbQ = 0;
 };
 
 string setupFile;
@@ -109,6 +109,7 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
 {
     map<string, ChannelInfo> channelInfoMap;
 
+    //////////////////////READING SETUP FILE//////////////////////
     ifstream file(filePath);
     if (!file.is_open())
     {
@@ -124,7 +125,7 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
         if (line.empty())
             continue;
 
-        istringstream iss(line);    
+        istringstream iss(line);
 
         string token;
         iss >> token;
@@ -137,22 +138,99 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
         }
         else if (token == "DSP_Label")
         {
+            if (currentChannelName.empty())
+            {
+                F2RInfo("File was genereted by multifast. Reading sample.pid file.");
+                break;
+            }
             ChannelInfo &channelInfo = channelInfoMap[currentChannelName];
             iss >> equal >> channelInfo.label;
         }
         else if (token == "DSP_Type_Alias")
         {
+            if (currentChannelName.empty())
+            {
+                F2RInfo("File was genereted by multifast. Reading sample.pid file.");
+                break;
+            }
             ChannelInfo &channelInfo = channelInfoMap[currentChannelName];
             iss >> equal >> channelInfo.coder;
         }
-        else if (token == "DSP_Nb_Q")
-        {
-            ChannelInfo &channelInfo = channelInfoMap[currentChannelName];
-            iss >> equal >> channelInfo.dspNbQ;
-        }
     }
-
     file.close();
+
+    //////////////////////READING SAMPLE.PID FILE FOR MULTIFAST MODE//////////////////////
+    if (channelInfoMap.empty())
+    {
+        ifstream file("sample.pid");
+        if (!file.is_open())
+        {
+            F2RError("Impossible to open sample.pid file");
+            exit(0);
+            return channelInfoMap;
+        }
+
+        string line;
+        string currentChannelName;
+        string equal;
+        while (getline(file, line))
+        {
+
+            if (line.find("#") != string::npos)
+                continue;
+
+            istringstream iss(line);
+
+            size_t lastDelimiterPos = line.rfind(':');
+            size_t firstDelimiterPos = line.find(':');
+            string currentChannelName = line.substr(lastDelimiterPos + 1);
+            string currentLabel = line.substr(0, firstDelimiterPos);
+            ChannelInfo channelInfo;
+            channelInfo.name = currentChannelName;
+            channelInfoMap[currentChannelName] = channelInfo;
+            channelInfoMap[currentChannelName].label = stoi(currentLabel);
+        }
+        file.close();
+
+        //////////////////////READING SETUP FILE FOR MULTIFAST MODE//////////////////////
+        ifstream ofile(filePath);
+        if (!ofile.is_open())
+        {
+            F2RError(("Impossible to open Setup file : " + filePath).c_str());
+            exit(0);
+            return channelInfoMap;
+        }
+
+        int try_label;
+        while (getline(ofile, line))
+        {
+            if (line.empty())
+                continue;
+
+            istringstream iss(line);
+
+            string token;
+            iss >> token;
+            if (token == "DSP_Label")
+            {
+                iss >> equal >> try_label;
+                for (const auto &pair : channelInfoMap)
+                {
+                    if (pair.second.label == try_label)
+                    {
+                        currentChannelName = pair.second.name;
+                        break;
+                    }
+                }
+            }
+            else if (token == "DSP_Type_Alias")
+            {
+                ChannelInfo &channelInfo = channelInfoMap[currentChannelName];
+                iss >> equal >> channelInfo.coder;
+            }
+        }
+        file.close();
+    }
 
     if (!HISTOGRAMS_RANGES)
     {
@@ -175,24 +253,37 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
             Detectors.resize(pair.second.label + 1);
         }
 
+        cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
+
         if (pair.second.coder == QDC_X1_TYPE_ALIAS || pair.second.coder == QDC_X2_TYPE_ALIAS || pair.second.coder == QDC_X3_TYPE_ALIAS || pair.second.coder == QDC_X4_TYPE_ALIAS)
+        {
+            cout << pair.second.name << " " << endl;
             Detectors[pair.second.label] = new QDC(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+        }
         else if (pair.second.coder == CRRC4_SPECTRO_TYPE_ALIAS)
+        {
+            cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
             Detectors[pair.second.label] = new CRRC4(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+        }
         else if (pair.second.coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
+        {
+            cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
             Detectors[pair.second.label] = new TRAPEZ(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+        }
         else
+        {
+            cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
             Detectors[pair.second.label] = new Detector(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
-        
+        }
+
         if (Detectors[pair.second.label]->GetDefaultRanges())
         {
-            output +=  Detectors[pair.second.label]->GetName();
+            output += Detectors[pair.second.label]->GetName();
             output += " \t ";
         }
     }
-    
     if (!output.empty())
-    F2RInfo("Default ranges for : " + output);
+        F2RInfo("Default ranges for : " + output);
 
     return channelInfoMap;
 }
@@ -214,8 +305,9 @@ int ReadRunTime()
     int error = 0;
 
     string start_time;
-    string stop_time;
+    string stop_time = " ";
     string line;
+    bool multifast = true;
 
     ifstream file(setupFile);
     if (file.is_open())
@@ -228,29 +320,78 @@ int ReadRunTime()
             }
             if (line.find("- Stop date") != string::npos)
             {
+                multifast = false;
                 stop_time = line.substr(16, 50);
                 break;
             }
         }
-        file.close();
+    }
+    else
+    {
+        F2RError("Impossible to open Setup file");
+        exit(0);
+    }
+    file.close();
 
+    if (multifast)
+    {
+        ifstream ofile(setupFile);
+        ofile.is_open();
+        while (getline(ofile, line))
+        {
+            if (line.find("- Start date") != string::npos)
+            {
+                start_time = line.substr(17, 50);
+            }
+            if (line.find("- Stop  date") != string::npos)
+            {
+                stop_time = line.substr(17, 50);
+                break;
+            }
+        }
+        ofile.close();
+    }
+
+    time_t stop_seconds;
+    time_t start_seconds;
+
+    if (multifast)
+    {
+        tm tm;
+        istringstream ss(start_time);
+        ss >> get_time(&tm, "%Y-%m-%d at %Hh-%Mm-%Ss");
+        start_seconds = mktime(&tm);
+
+        ss.clear();
+        ss.str(stop_time);
+        ss >> get_time(&tm, "%Y-%m-%d at %Hh-%Mm-%Ss");
+        stop_seconds = mktime(&tm);
+    }
+    else
+    {
         tm tm;
         istringstream ss(start_time);
         ss >> get_time(&tm, "%d-%m-%Y %H:%M:%S");
-        time_t start_seconds = mktime(&tm);
+        start_seconds = mktime(&tm);
 
         ss.clear();
         ss.str(stop_time);
         ss >> get_time(&tm, "%d-%m-%Y %H:%M:%S");
-        time_t stop_seconds = mktime(&tm);
-
-        TOTAL_TIME = difftime(stop_seconds, start_seconds);
+        stop_seconds = mktime(&tm);
     }
+
+    
+
+    TOTAL_TIME = difftime(stop_seconds, start_seconds);
+
+    cout << "Total time : " << TOTAL_TIME << endl;
+
+    exit(0);
 
     return (error);
 }
 
-int GetChannel(faster_data_p data) 
+int GetChannel(faster_data_p data)
 {
     if (coder == QDC_X1_TYPE_ALIAS)
     {
@@ -321,30 +462,29 @@ int Filling()
 
             if (channel == -1)
                 continue;
-            
-            #ifdef USE_SIGNAL_DICT
-            signal_vec.push_back(Signal(label, clock_ns, channel));
-            #endif
 
-            #ifndef USE_SIGNAL_DICT
+#ifdef USE_SIGNAL_DICT
+            signal_vec.push_back(Signal(label, clock_ns, channel));
+#endif
+
+#ifndef USE_SIGNAL_DICT
             Label_vec.push_back(label);
             Time_vec.push_back(clock_ns);
             Channel_vec.push_back(channel);
-            #endif
-            
+#endif
         }
 
-        faster_buffer_reader_close(group_reader);   
+        faster_buffer_reader_close(group_reader);
         Tree_Group->Fill();
 
-        #ifdef USE_SIGNAL_DICT
+#ifdef USE_SIGNAL_DICT
         signal_vec.clear();
-        #endif
-        #ifndef USE_SIGNAL_DICT
+#endif
+#ifndef USE_SIGNAL_DICT
         Label_vec.clear();
         Time_vec.clear();
         Channel_vec.clear();
-        #endif
+#endif
 
         return 0;
     }
@@ -354,16 +494,33 @@ int Filling()
 
         if (Channel == -1)
             return 0;
-        #ifdef USE_SIGNAL_DICT
+#ifdef USE_SIGNAL_DICT
         signal = Signal(label, clock_ns, Channel);
-        #endif
-        #ifndef USE_SIGNAL_DICT
+#endif
+#ifndef USE_SIGNAL_DICT
         Label = label;
         Time = clock_ns;
-        #endif
+#endif
         Tree->Fill();
         return 0;
     }
 }
 
+bool FolderExists(const string &folderPath)
+{
+    struct stat info;
+
+    if (stat(folderPath.c_str(), &info) != 0)
+    {
+        return false;
+    }
+    else if (info.st_mode & S_IFDIR)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 #endif

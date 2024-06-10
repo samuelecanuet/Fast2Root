@@ -1,4 +1,5 @@
 #include "Fast2Root.hh"
+#include <unistd.h>
 
 int main(int argc, char **argv)
 {
@@ -22,10 +23,6 @@ int main(int argc, char **argv)
       reader = faster_file_reader_open(filename_base.c_str());
       faster_file_reader_close(reader);
       filename_base = filename_base.substr(0, filename_base.size() - 10);
-
-      ifstream file(argv[1], ifstream::ate | ifstream::binary);
-      file_size = static_cast<int>(file.tellg());
-      file.close();
 
       F2RSuccess("Data file found");
 
@@ -59,8 +56,39 @@ int main(int argc, char **argv)
     }
   }
 
+  //////OPTION
+  string outputPath;
+  int opt;
+
+  while ((opt = getopt(argc, argv, "o:")) != -1)
+  {
+    switch (opt)
+    {
+    case 'o':
+      outputPath = optarg;
+      if (!FolderExists(outputPath))
+        {
+          F2RError("Output path does not exist");
+          exit(0);
+        }
+      break;
+    default: 
+      size_t lastDelimiterPos = filename_base.rfind('/');
+      outputPath = filename_base.substr(0, lastDelimiterPos);
+      exit(0);
+    }
+  }
+
+  if (optind >= argc)
+  {
+    F2RError("Expected argument after options");
+    exit(0);
+  }
+
   /////////// ROOT FINAL FILE /////////////////////
-  ROOTFile = new TFile((filename_base + ".root").c_str(), "RECREATE");
+  size_t lastDelimiterPos = filename_base.rfind('/');
+  string filename_raw = filename_base.substr(lastDelimiterPos + 1);
+  ROOTFile = new TFile((outputPath + filename_raw + ".root").c_str(), "RECREATE");
 
   /////////// BUILD DETECTORS /////////////////////
   map<string, ChannelInfo> channelInfoMap = InitDetectors(setupFile);
@@ -98,7 +126,7 @@ int main(int argc, char **argv)
 
   string filename = argv[1];
   cout << endl;
-  F2RInfo("Starting reading : " + string(gSystem->BaseName(filename_base.c_str())));
+  F2RInfo("Starting reading : " + string(argv[1]));
 
   reader = faster_file_reader_open(filename.c_str());
   
