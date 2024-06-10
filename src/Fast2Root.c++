@@ -128,8 +128,10 @@ int main(int argc, char **argv)
   ////////////////////////////// WRITTING ROOT FILE /////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
   F2RInfo("Writting ROOT file");
+  ROOTFile->cd();
   WriteHistograms();
   
+  ROOTFile->cd();
   Tree->Write();
   Tree_Group->Write();
   ROOTFile->Close();

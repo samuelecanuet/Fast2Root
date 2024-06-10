@@ -61,5 +61,9 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
 ## TODO
 - Include all the faster data type
 
+## Version
+- v2.0 Basic Reader with QDC and CRRC4 implemented
+- v2.1 Adding TRAPEZ
+
 ## AUTOR
 *Samuel Lecanuet lp2iB*

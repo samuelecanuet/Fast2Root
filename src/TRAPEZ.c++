@@ -1,6 +1,7 @@
-#include "CRRC4.hh"
+#include "TRAPEZ.hh"
+#include "Detector.hh"
 
-CRRC4::CRRC4(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : Detector(Name, Label, Coder, file, TOTAL_TIME)
+TRAPEZ::TRAPEZ(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : Detector(Name, Label, Coder, file, TOTAL_TIME)
 {
     Channel = new TH1D((Name + "_Channel").c_str(), (Name + "_Channel").c_str(), BIN, MIN, MAX);
     Time = new TH1D((Name + "_Time").c_str(), (Name + "_Time").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
@@ -12,24 +13,26 @@ CRRC4::CRRC4(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) 
     ChannelSaturated = new TH2D((Name + "_ChannelSaturated").c_str(), (Name + "_ChannelSaturated").c_str(), TOTAL_TIME, 0, TOTAL_TIME, BIN, MIN, MAX);
 }
 
-void CRRC4::Fill(crrc4_spectro value, int time)
+void TRAPEZ::Fill(trapez_spectro value, int time)
 {
     Channel->Fill(value.measure);
     Time->Fill(time);
     PileUp->Fill(value.pileup);
     Saturated->Fill(value.saturated);
+
     ChannelTime->Fill(time, value.measure);
     ChannelPileUp->Fill(time, value.pileup);
     ChannelSaturated->Fill(time, value.saturated);
 }
 
-void CRRC4::Write()
+void TRAPEZ::Write()
 {
     DetectorDir->cd();
     Channel->Write();
     Time->Write();
     PileUp->Write();
     Saturated->Write();
+
     ChannelTime->Write();
     ChannelPileUp->Write();
     ChannelSaturated->Write();

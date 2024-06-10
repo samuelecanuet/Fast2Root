@@ -16,5 +16,7 @@ class QDC : public Detector
     TDirectory *Coderdir[4];
     TH1D *Channel[4];
     TH1D *Time[4];
-    TH2I *ChannelTime[4];
+    TH1D *Saturated[4];
+    TH2D *ChannelTime[4];
+    TH2D *ChannelSaturated[4];
 };

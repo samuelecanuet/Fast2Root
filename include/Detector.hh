@@ -51,6 +51,7 @@ class Detector
     virtual void Fill(qdc_x3 value, int Time);
     virtual void Fill(qdc_x4 value, int Time);
     virtual void Fill(crrc4_spectro value, int Time);
+    virtual void Fill(trapez_spectro value, int Time);
 
     virtual void Write();
     int SetRangesFromFile();

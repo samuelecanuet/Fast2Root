@@ -44,6 +44,10 @@ void Detector::Fill(crrc4_spectro value, int Time)
 {
 }
 
+void Detector::Fill(trapez_spectro value, int Time)
+{
+}
+
 void Detector::Write()
 {
 }
