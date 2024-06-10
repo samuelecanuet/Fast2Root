@@ -31,6 +31,7 @@
 #include "Detector.hh"
 #include "QDC.hh"
 #include "CRRC4.hh"
+#include "TRAPEZ.hh"
 
 #ifdef USE_SIGNAL_DICT
 #include "../../lib/SignalDict/Signal.h"
@@ -98,6 +99,7 @@ qdc_x2 qdc2;
 qdc_x3 qdc3;
 qdc_x4 qdc4;
 crrc4_spectro spectro_data;
+trapez_spectro trapez_data;
 
 bool Coder_Not_Implemented[999];
 
@@ -122,7 +124,8 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
         if (line.empty())
             continue;
 
-        istringstream iss(line);
+        istringstream iss(line);        cout << detector->GetName() << endl;
+
         string token;
         iss >> token;
         if (token == ":")
@@ -176,6 +179,8 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
             Detectors[pair.second.label] = new QDC(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         else if (pair.second.coder == CRRC4_SPECTRO_TYPE_ALIAS)
             Detectors[pair.second.label] = new CRRC4(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+        else if (pair.second.coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
+            Detectors[pair.second.label] = new TRAPEZ(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         else
             Detectors[pair.second.label] = new Detector(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         
@@ -281,6 +286,13 @@ int GetChannel(faster_data_p data)
         Channel_vec.push_back(spectro_data.measure);
         Detectors[label]->Fill(spectro_data, clock_ns);
         return spectro_data.measure;
+    }
+    else if (coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
+    {
+        faster_data_load(data, &trapez_data);
+        Channel_vec.push_back(trapez_data.measure);
+        Detectors[label]->Fill(trapez_data, clock_ns);
+        return trapez_data.measure;
     }
     else
     {
