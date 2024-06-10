@@ -19,6 +19,7 @@ int main(int argc, char **argv)
     }
     else
     {
+      fast_filename_raw = argv[1];
       filename_base = argv[1];
       reader = faster_file_reader_open(filename_base.c_str());
       faster_file_reader_close(reader);
@@ -118,17 +119,17 @@ int main(int argc, char **argv)
   /////////////////////////////// READ FAST FILE ////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
 
-  string arg = argv[1];
-  size_t found = arg.find_last_of("_");
-  string extracted = arg.substr(found + 1, 4);
+  size_t found = fast_filename_raw.rfind("_");
+  string extracted = fast_filename_raw.substr(found + 1, 4);
   int subrun_number = stoi(extracted);
-  string filename_base = arg.substr(0, found);
+  string filename_base = fast_filename_raw.substr(0, found);
 
-  string filename = argv[1];
+  size_t found_filename = fast_filename_raw.rfind("/");
+  string fast_filename_short = fast_filename_raw.substr(0, found_filename);
   cout << endl;
-  F2RInfo("Starting reading : " + string(argv[1]));
+  F2RInfo("Starting reading : " + fast_filename_short);
 
-  reader = faster_file_reader_open(filename.c_str());
+  reader = faster_file_reader_open(fast_filename_raw.c_str());
   
   while (reader != 0)
   {
@@ -145,8 +146,8 @@ int main(int argc, char **argv)
     subrun_number++;
     stringstream ss;
     ss << setw(4) << setfill('0') << subrun_number;
-    filename = filename_base + "_" + ss.str() + ".fast";
-    reader = faster_file_reader_open(filename.c_str());
+    fast_filename_raw = filename_base + "_" + ss.str() + ".fast";
+    reader = faster_file_reader_open(fast_filename_raw.c_str());
   }     
 
   faster_file_reader_close(reader);

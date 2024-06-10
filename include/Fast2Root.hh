@@ -49,6 +49,7 @@ struct ChannelInfo
 
 string setupFile;
 string inputrange;
+string fast_filename_raw;
 vector<Detector *> Detectors;
 TFile *ROOTFile;
 string filename_base;
@@ -253,26 +254,21 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
             Detectors.resize(pair.second.label + 1);
         }
 
-        cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
 
         if (pair.second.coder == QDC_X1_TYPE_ALIAS || pair.second.coder == QDC_X2_TYPE_ALIAS || pair.second.coder == QDC_X3_TYPE_ALIAS || pair.second.coder == QDC_X4_TYPE_ALIAS)
         {
-            cout << pair.second.name << " " << endl;
             Detectors[pair.second.label] = new QDC(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
         else if (pair.second.coder == CRRC4_SPECTRO_TYPE_ALIAS)
         {
-            cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
             Detectors[pair.second.label] = new CRRC4(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
         else if (pair.second.coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
         {
-            cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
             Detectors[pair.second.label] = new TRAPEZ(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
         else
         {
-            cout << pair.second.name << " " << pair.second.label << " " << pair.second.coder << endl;
             Detectors[pair.second.label] = new Detector(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
 

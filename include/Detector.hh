@@ -74,10 +74,7 @@ class Detector
 
 
     TDirectory *DetectorDir;
-    // TDirectory *Coderdir[4];
-    // TH1D *Channel[4];
-    // TH1D *Time[4];
-    // TH2I *ChannelTime[4];
+
 };
 
 #endif
