@@ -384,10 +384,6 @@ int ReadRunTime()
 
     TOTAL_TIME = difftime(stop_seconds, start_seconds);
 
-    cout << "Total time : " << TOTAL_TIME << endl;
-
-    exit(0);
-
     return (error);
 }
 

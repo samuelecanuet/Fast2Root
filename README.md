@@ -24,10 +24,10 @@ make clean
 ```
 
 ## Usage
-The .setup file and the .fast file must be in the same directory. An automatic iterating loop will read all the following subfast files (_000x).
+The .setup file and the .fast file must be in the same directory. An automatic iterating loop will read all the following subfast files (_000x). By default the output is saved in the fast file directory, but you can indicate an other path with the option *-o*. If you are using file from multifast mode you have to provide the sample.pid file in the main directory of Fast2Root.
 
 ```bash
-Fast2Root <path/filename_0001.fast> 
+Fast2Root <path/filename_0001.fast> -o <path_ROOT_Output>
 ```
 
 ## Result
@@ -36,7 +36,11 @@ At the end you have a ROOT file in the .fast file directory.
 ### Pre-analysed histograms for each channel:
  - Channel
  - Time
+ - Saturated *(if supported by the coder)*
+ - PileUp *(if supported by the coder)*
  - Channel/Time
+ - Channel/Saturated *(if supported by the coder)*
+ - Channel/PileUp *(if supported by the coder)*
 
 ### Tree
 You have 2 TTrees, one for ungrouped data and one for grouped data.
