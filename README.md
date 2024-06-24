@@ -69,6 +69,7 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
 - v2.0 Basic Reader with QDC and CRRC4 implemented
 - v2.1 Adding TRAPEZ
 - v2.2 Support multifast files
+- v2.3 Writing recorded Start/Stop time in the ouput ROOT file
 
 ## AUTOR
 *Samuel Lecanuet lp2iB*

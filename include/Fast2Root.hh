@@ -79,7 +79,7 @@ faster_file_reader_p reader;
 int file_size = 0;
 int counter = 0;
 //  data
-faster_data_p data;
+faster_data_p _data;
 faster_data_p group_data;
 unsigned char coder;
 unsigned short label;
@@ -296,7 +296,7 @@ void WriteHistograms()
     ROOTFile->cd();
 }
 
-int ReadRunTime()
+pair<string, string> ReadRunTime()
 {
     int error = 0;
 
@@ -380,49 +380,49 @@ int ReadRunTime()
 
     TOTAL_TIME = difftime(stop_seconds, start_seconds);
 
-    return (error);
+    return make_pair(start_time, stop_time);
 }
 
-int GetChannel(faster_data_p data)
+int GetChannel(faster_data_p _data)
 {
     if (coder == QDC_X1_TYPE_ALIAS)
     {
-        faster_data_load(data, &qdc1);
+        faster_data_load(_data, &qdc1);
         Channel_vec.push_back(qdc1.q1);
         Detectors[label]->Fill(qdc1, clock_ns);
         return qdc1.q1;
     }
     else if (coder == QDC_X2_TYPE_ALIAS)
     {
-        faster_data_load(data, &qdc2);
+        faster_data_load(_data, &qdc2);
         Channel_vec.push_back(qdc2.q1);
         Detectors[label]->Fill(qdc2, clock_ns);
         return qdc2.q1;
     }
     else if (coder == QDC_X3_TYPE_ALIAS)
     {
-        faster_data_load(data, &qdc3);
+        faster_data_load(_data, &qdc3);
         Channel_vec.push_back(qdc3.q1);
         Detectors[label]->Fill(qdc3, clock_ns);
         return qdc3.q1;
     }
     else if (coder == QDC_X4_TYPE_ALIAS)
     {
-        faster_data_load(data, &qdc4);
+        faster_data_load(_data, &qdc4);
         Channel_vec.push_back(qdc4.q1);
         Detectors[label]->Fill(qdc4, clock_ns);
         return qdc4.q1;
     }
     else if (coder == CRRC4_SPECTRO_TYPE_ALIAS)
     {
-        faster_data_load(data, &spectro_data);
+        faster_data_load(_data, &spectro_data);
         Channel_vec.push_back(spectro_data.measure);
         Detectors[label]->Fill(spectro_data, clock_ns);
         return spectro_data.measure;
     }
     else if (coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
     {
-        faster_data_load(data, &trapez_data);
+        faster_data_load(_data, &trapez_data);
         Channel_vec.push_back(trapez_data.measure);
         Detectors[label]->Fill(trapez_data, clock_ns);
         return trapez_data.measure;
@@ -443,14 +443,14 @@ int Filling()
 
     if (coder == GROUP_TYPE_ALIAS)
     {
-        lsize = faster_data_load(data, group_buffer);
+        lsize = faster_data_load(_data, group_buffer);
         group_reader = faster_buffer_reader_open(group_buffer, lsize);
-        while ((data = faster_buffer_reader_next(group_reader)) != NULL)
+        while ((_data = faster_buffer_reader_next(group_reader)) != NULL)
         {
-            coder = faster_data_type_alias(data);
-            label = faster_data_label(data);
-            clock_ns = faster_data_clock_ns(data);
-            channel = GetChannel(data);
+            coder = faster_data_type_alias(_data);
+            label = faster_data_label(_data);
+            clock_ns = faster_data_clock_ns(_data);
+            channel = GetChannel(_data);
 
             if (channel == -1)
                 continue;
@@ -482,7 +482,7 @@ int Filling()
     }
     else
     {
-        Channel = GetChannel(data);
+        Channel = GetChannel(_data);
 
         if (Channel == -1)
             return 0;
@@ -515,4 +515,5 @@ bool FolderExists(const string &folderPath)
         return false;
     }
 }
+
 #endif

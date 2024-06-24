@@ -19,11 +19,11 @@ QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : De
     {
         Coderdir[i] = DetectorDir->mkdir(("QDC" + to_string(i+1)).c_str());
         Channel[i] = new TH1D((Name + "_QDC" + to_string(i+1)+"_Channel").c_str(), (Name + "_QDC" + to_string(i+1)+"_Channel").c_str(), BIN, MIN, MAX);
-        Time[i] = new TH1D((Name + "_QDC" + to_string(i+1)+"_Time").c_str(), (Name + "_QDC" + to_string(i+1)+"_Time").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
+        Time[i] = new TH1D((Name + "_QDC" + to_string(i+1)+"_Time").c_str(), (Name + "_QDC" + to_string(i+1)+"_Time").c_str(), TOTAL_TIME/100, 0, TOTAL_TIME);
         Saturated[i] = new TH1D((Name + "_QDC" + to_string(i+1)+"_Saturated").c_str(), (Name + "_QDC" + to_string(i+1)+"_Saturated").c_str(), BIN, MIN, MAX);
 
-        ChannelTime[i] = new TH2D((Name + "_QDC" + to_string(i+1) + "_ChannelTime").c_str(), (Name + "_QDC" + to_string(i+1) + "_ChannelTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME, BIN, MIN, MAX);
-        ChannelSaturated[i] = new TH2D((Name + "_QDC" + to_string(i+1) + "_ChannelSaturated").c_str(), (Name + "_QDC" + to_string(i+1) + "_ChannelSaturated").c_str(), TOTAL_TIME, 0, TOTAL_TIME, BIN, MIN, MAX);
+        ChannelTime[i] = new TH2D((Name + "_QDC" + to_string(i+1) + "_ChannelTime").c_str(), (Name + "_QDC" + to_string(i+1) + "_ChannelTime").c_str(), TOTAL_TIME/100, 0, TOTAL_TIME, BIN, MIN, MAX);
+        ChannelSaturated[i] = new TH2D((Name + "_QDC" + to_string(i+1) + "_ChannelSaturated").c_str(), (Name + "_QDC" + to_string(i+1) + "_ChannelSaturated").c_str(), TOTAL_TIME/100, 0, TOTAL_TIME, BIN, MIN, MAX);
     }
 }
 

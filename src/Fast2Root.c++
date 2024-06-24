@@ -135,11 +135,11 @@ int main(int argc, char **argv)
   {
     F2RInfo("SubFast file : " + to_string(subrun_number));
 
-    while ((data = faster_file_reader_next(reader)) != NULL)
+    while ((_data = faster_file_reader_next(reader)) != NULL)
     {    
-      coder = faster_data_type_alias(data);
-      label = faster_data_label(data);
-      clock_ns = faster_data_clock_ns(data);
+      coder = faster_data_type_alias(_data);
+      label = faster_data_label(_data);
+      clock_ns = faster_data_clock_ns(_data);
       Filling();
     }
     faster_file_reader_close(reader);
@@ -164,6 +164,9 @@ int main(int argc, char **argv)
   ROOTFile->cd();
   Tree->Write();
   Tree_Group->Write();
+  pair<string, string> FasterTime = ReadRunTime();
+  TNamed("Start_Time", FasterTime.first.c_str()).Write();
+  TNamed("End_Time", FasterTime.second.c_str()).Write();
   ROOTFile->Close();
   ///////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////// END OF PROGRAM /////////////////////////////////////////////
