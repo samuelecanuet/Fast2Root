@@ -61,7 +61,9 @@ TTree *Tree_Group;
 vector<double> Channel_vec;
 vector<double> Time_vec;
 vector<int> Label_vec;
+vector<int> PileUp_vec;
 double Channel;
+int PileUp;
 double Time;
 int Label;
 
@@ -85,7 +87,9 @@ unsigned char coder;
 unsigned short label;
 double clock_ns;
 double clock_sec;
+pair<int, int> channelpileup;
 int channel;
+int pileup;
 int counter_time = 0;
 double START_TIME;
 
@@ -383,49 +387,49 @@ pair<string, string> ReadRunTime()
     return make_pair(start_time, stop_time);
 }
 
-int GetChannel(faster_data_p _data)
+pair<int, int> GetChannel(faster_data_p _data)
 {
     if (coder == QDC_X1_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc1);
         Channel_vec.push_back(qdc1.q1);
         Detectors[label]->Fill(qdc1, clock_ns);
-        return qdc1.q1;
+        return make_pair((int)qdc1.q1, 0);
     }
     else if (coder == QDC_X2_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc2);
         Channel_vec.push_back(qdc2.q1);
         Detectors[label]->Fill(qdc2, clock_ns);
-        return qdc2.q1;
+        return make_pair((int)qdc2.q1, 0);
     }
     else if (coder == QDC_X3_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc3);
         Channel_vec.push_back(qdc3.q1);
         Detectors[label]->Fill(qdc3, clock_ns);
-        return qdc3.q1;
+        return make_pair((int)qdc3.q1, 0);
     }
     else if (coder == QDC_X4_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc4);
         Channel_vec.push_back(qdc4.q1);
         Detectors[label]->Fill(qdc4, clock_ns);
-        return qdc4.q1;
+        return make_pair((int)qdc4.q1, 0);
     }
     else if (coder == CRRC4_SPECTRO_TYPE_ALIAS)
     {
         faster_data_load(_data, &spectro_data);
         Channel_vec.push_back(spectro_data.measure);
         Detectors[label]->Fill(spectro_data, clock_ns);
-        return spectro_data.measure;
+        return make_pair((int)spectro_data.measure, (int)spectro_data.pileup);
     }
     else if (coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
     {
         faster_data_load(_data, &trapez_data);
         Channel_vec.push_back(trapez_data.measure);
         Detectors[label]->Fill(trapez_data, clock_ns);
-        return trapez_data.measure;
+        return make_pair((int)trapez_data.measure, (int)trapez_data.pileup);
     }
     else
     {
@@ -434,7 +438,7 @@ int GetChannel(faster_data_p _data)
             F2RWarning(Form(("Coder " + string(type_name(coder)) + " not implemented yet").c_str()));
             Coder_Not_Implemented[coder] = true;
         }
-        return -1;
+        return make_pair(-1, -1);
     }
 }
 
@@ -450,19 +454,22 @@ int Filling()
             coder = faster_data_type_alias(_data);
             label = faster_data_label(_data);
             clock_ns = faster_data_clock_ns(_data);
-            channel = GetChannel(_data);
+            channelpileup = GetChannel(_data);
+            channel = channelpileup.first;
+            pileup = channelpileup.second;
 
             if (channel == -1)
                 continue;
 
 #ifdef USE_SIGNAL_DICT
-            signal_vec.push_back(Signal(label, clock_ns, channel));
+            signal_vec.push_back(Signal(label, clock_ns, channel, pileup));
 #endif
 
 #ifndef USE_SIGNAL_DICT
             Label_vec.push_back(label);
             Time_vec.push_back(clock_ns);
             Channel_vec.push_back(channel);
+            PileUp_vec.push_back(pileup);
 #endif
         }
 
@@ -476,18 +483,21 @@ int Filling()
         Label_vec.clear();
         Time_vec.clear();
         Channel_vec.clear();
+        PileUp_vec.clear();
 #endif
 
         return 0;
     }
     else
     {
-        Channel = GetChannel(_data);
+        channelpileup = GetChannel(_data);
+        Channel = channelpileup.first;
+        PileUp = channelpileup.second;
 
         if (Channel == -1)
             return 0;
 #ifdef USE_SIGNAL_DICT
-        signal = Signal(label, clock_ns, Channel);
+        signal = Signal(label, clock_ns, Channel, pileup);
 #endif
 #ifndef USE_SIGNAL_DICT
         Label = label;

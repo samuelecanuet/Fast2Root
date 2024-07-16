@@ -70,6 +70,7 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
 - v2.1 Adding TRAPEZ
 - v2.2 Support multifast files
 - v2.3 Writing recorded Start/Stop time in the ouput ROOT file
+- v2.4 Saving PileUp tag from Spectro coders
 
 ## AUTOR
 *Samuel Lecanuet lp2iB*

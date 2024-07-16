@@ -6,7 +6,7 @@ CRRC4::CRRC4(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) 
 
     Channel = new TH1D((Name + "_Channel").c_str(), (Name + "_Channel").c_str(), BIN, MIN, MAX);
     Time = new TH1D((Name + "_Time").c_str(), (Name + "_Time").c_str(), TOTAL_TIME/100, 0, TOTAL_TIME);
-    PileUp = new TH1D((Name + "_PileUp").c_str(), (Name + "_PileUp").c_str(), BIN, MIN, MAX);
+    PileUp = new TH1D((Name + "_PileUp").c_str(), (Name + "_PileUp").c_str(), 2, 0, 2);
     Saturated = new TH1D((Name + "_Saturated").c_str(), (Name + "_Saturated").c_str(), BIN, MIN, MAX);
 
     ChannelTime = new TH2D((Name + "_ChannelTime").c_str(), (Name + "_ChannelTime").c_str(), TOTAL_TIME/100, 0, TOTAL_TIME, BIN, MIN, MAX);
