@@ -50,16 +50,18 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
         - *(int)* Channel 
         - *(int)* Label
         - *(int)* Time
+        - *(int)* PileUp
     - *Grouped Tree*
         - *vector\<int>* Channel
         - *vector\<int>* Label
         - *vector\<int>* Time
+        - *vector\<int>* PileUp
 
 - In s mode (Signal ROOT Dictionnary)
     - *Ungrouped Tree*
-        - *(Signal)* (Channel, Label, Time)
+        - *(Signal)* (Channel, Label, Time, PileUp)
     - *Grouped Tree*
-        - *vector\<Signal>* (Channel, Label, Time)
+        - *vector\<Signal>* (Channel, Label, Time, PileUp)
 
 
 ## TODO

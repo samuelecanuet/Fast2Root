@@ -100,11 +100,13 @@ int main(int argc, char **argv)
   Tree->Branch("Channel", &Channel);
   Tree->Branch("Time", &Time);
   Tree->Branch("Label", &Label);
+  Tree->Branch("PileUp", &PileUp);
 
   Tree_Group = new TTree("Tree_Group", "Tree_Group");
   Tree_Group->Branch("Channel", &Channel_vec);
   Tree_Group->Branch("Time", &Time_vec);
   Tree_Group->Branch("Label", &Label_vec);
+  Tree_Group->Branch("PileUp", &PileUp_vec);
   #endif
 
   #ifdef USE_SIGNAL_DICT
