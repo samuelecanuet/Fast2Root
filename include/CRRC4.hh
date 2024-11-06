@@ -6,9 +6,9 @@ class CRRC4 : public Detector
     public: 
     CRRC4(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME);
 
-    void Fill(crrc4_spectro value, int Time) override;
+    void Fill(crrc4_spectro value, double Time) override;
+    void Fill(spectro_counter value, double Time) override;
     void Write() override ;
-
 
     TH1D *Channel;
     TH1D *Time;
@@ -16,6 +16,14 @@ class CRRC4 : public Detector
     TH1D *Saturated;
 
     TH2D *ChannelTime;
-    TH2D *ChannelPileUp;
-    TH2D *ChannelSaturated;
+    TH1D *ChannelPileUp;
+    TH1D *ChannelSaturated;
+
+    TH1D *Scaler;
+    double last_scalercalc = 0;
+    double last_scalersent = 0;
+    double last_scalertrig = 0; 
+    TH1D* DiffScalerTrigTime;
+    TH1D* DiffScalerSentTime;
+    TH1D* DiffScalerCalcTime;
 };

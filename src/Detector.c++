@@ -24,27 +24,35 @@ Detector::~Detector()
 {
 }
 
-void Detector::Fill(qdc_x1 value, int Time)
+void Detector::Fill(qdc_x1 value, double Time)
 {
 }
 
-void Detector::Fill(qdc_x2 value, int Time)
+void Detector::Fill(qdc_x2 value, double Time)
 {
 }
 
-void Detector::Fill(qdc_x3 value, int Time)
+void Detector::Fill(qdc_x3 value, double Time)
 {
 }
 
-void Detector::Fill(qdc_x4 value, int Time)
+void Detector::Fill(qdc_x4 value, double Time)
 {
 }
 
-void Detector::Fill(crrc4_spectro value, int Time)
+void Detector::Fill(crrc4_spectro value, double Time)
 {
 }
 
-void Detector::Fill(trapez_spectro value, int Time)
+void Detector::Fill(trapez_spectro value, double Time)
+{
+}
+
+void Detector::Fill(spectro_counter value, double Time)
+{
+}
+
+void Detector::Fill(qdc_counter value, double Time)
 {
 }
 

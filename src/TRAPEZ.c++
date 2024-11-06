@@ -7,15 +7,15 @@ TRAPEZ::TRAPEZ(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME
     
     Channel = new TH1D((Name + "_Channel").c_str(), (Name + "_Channel").c_str(), BIN, MIN, MAX);
     Time = new TH1D((Name + "_Time").c_str(), (Name + "_Time").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
-    PileUp = new TH1D((Name + "_PileUp").c_str(), (Name + "_PileUp").c_str(), BIN, MIN, MAX);
-    Saturated = new TH1D((Name + "_Saturated").c_str(), (Name + "_Saturated").c_str(), BIN, MIN, MAX);
+    PileUp = new TH1D((Name + "_PileUp").c_str(), (Name + "_PileUp").c_str(), 2, 0,2);
+    Saturated = new TH1D((Name + "_Saturated").c_str(), (Name + "_Saturated").c_str(), 2, 0, 2);
 
     ChannelTime = new TH2D((Name + "_ChannelTime").c_str(), (Name + "_ChannelTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME, BIN, MIN, MAX);
-    ChannelPileUp = new TH2D((Name + "_ChannelPileUp").c_str(), (Name + "_ChannelPileUp").c_str(), TOTAL_TIME, 0, TOTAL_TIME, BIN, MIN, MAX);
-    ChannelSaturated = new TH2D((Name + "_ChannelSaturated").c_str(), (Name + "_ChannelSaturated").c_str(), TOTAL_TIME, 0, TOTAL_TIME, BIN, MIN, MAX);
+    ChannelPileUp = new TH1D((Name + "_ChannelPileUp").c_str(), (Name + "_ChannelPileUp").c_str(), BIN, MIN, MAX);
+    ChannelSaturated = new TH1D((Name + "_ChannelSaturated").c_str(), (Name + "_ChannelSaturated").c_str(), BIN, MIN, MAX);
 }
 
-void TRAPEZ::Fill(trapez_spectro value, int time)
+void TRAPEZ::Fill(trapez_spectro value, double time)
 {
     Channel->Fill(value.measure);
     Time->Fill(time);
@@ -23,8 +23,21 @@ void TRAPEZ::Fill(trapez_spectro value, int time)
     Saturated->Fill(value.saturated);
 
     ChannelTime->Fill(time, value.measure);
-    ChannelPileUp->Fill(time, value.pileup);
-    ChannelSaturated->Fill(time, value.saturated);
+    if (value.pileup)
+        ChannelPileUp->Fill(value.measure);
+    if (value.saturated)
+        ChannelSaturated->Fill(value.measure);
+}
+
+void TRAPEZ::Fill(spectro_counter value, double time)
+{
+    DiffScalerTrigTime->Fill(time, value.trig - last_scalertrig);
+    DiffScalerSentTime->Fill(time, value.sent - last_scalersent);
+    DiffScalerCalcTime->Fill(time, value.calc - last_scalercalc);
+
+    last_scalertrig = value.trig;
+    last_scalersent = value.sent;
+    last_scalercalc = value.calc;
 }
 
 void TRAPEZ::Write()
@@ -38,4 +51,12 @@ void TRAPEZ::Write()
     ChannelTime->Write();
     ChannelPileUp->Write();
     ChannelSaturated->Write();
+
+    DiffScalerTrigTime->Write();
+    DiffScalerSentTime->Write();
+    DiffScalerCalcTime->Write();
+    Scaler->SetBinContent(1, DiffScalerTrigTime->Integral());
+    Scaler->SetBinContent(2, DiffScalerSentTime->Integral());
+    Scaler->SetBinContent(3, DiffScalerCalcTime->Integral());
+    Scaler->Write();
 }

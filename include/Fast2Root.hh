@@ -105,6 +105,8 @@ qdc_x3 qdc3;
 qdc_x4 qdc4;
 crrc4_spectro spectro_data;
 trapez_spectro trapez_data;
+spectro_counter spectro_scaler;
+qdc_counter qdc_scaler;
 
 bool Coder_Not_Implemented[999];
 
@@ -258,16 +260,15 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
             Detectors.resize(pair.second.label + 1);
         }
 
-
-        if (pair.second.coder == QDC_X1_TYPE_ALIAS || pair.second.coder == QDC_X2_TYPE_ALIAS || pair.second.coder == QDC_X3_TYPE_ALIAS || pair.second.coder == QDC_X4_TYPE_ALIAS)
+        if (pair.second.coder == QDC_X1_TYPE_ALIAS || pair.second.coder == QDC_X2_TYPE_ALIAS || pair.second.coder == QDC_X3_TYPE_ALIAS || pair.second.coder == QDC_X4_TYPE_ALIAS || pair.second.coder == QDC_COUNTER_TYPE_ALIAS)
         {
             Detectors[pair.second.label] = new QDC(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
-        else if (pair.second.coder == CRRC4_SPECTRO_TYPE_ALIAS)
+        else if (pair.second.coder == CRRC4_SPECTRO_TYPE_ALIAS || pair.second.coder == SPECTRO_COUNTER_TYPE_ALIAS)
         {
             Detectors[pair.second.label] = new CRRC4(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
-        else if (pair.second.coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
+        else if (pair.second.coder == TRAPEZ_SPECTRO_TYPE_ALIAS || pair.second.coder == SPECTRO_COUNTER_TYPE_ALIAS)
         {
             Detectors[pair.second.label] = new TRAPEZ(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
         }
@@ -389,41 +390,54 @@ pair<string, string> ReadRunTime()
 
 pair<int, int> GetChannel(faster_data_p _data)
 {
+    double clock_sec = clock_ns / 1e9;
     if (coder == QDC_X1_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc1);
-        Detectors[label]->Fill(qdc1, clock_ns);
+        Detectors[label]->Fill(qdc1, clock_sec);
         return make_pair((int)qdc1.q1, 0);
     }
     else if (coder == QDC_X2_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc2);
-        Detectors[label]->Fill(qdc2, clock_ns);
+        Detectors[label]->Fill(qdc2, clock_sec);
         return make_pair((int)qdc2.q1, 0);
     }
     else if (coder == QDC_X3_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc3);
-        Detectors[label]->Fill(qdc3, clock_ns);
+        Detectors[label]->Fill(qdc3, clock_sec);
         return make_pair((int)qdc3.q1, 0);
     }
     else if (coder == QDC_X4_TYPE_ALIAS)
     {
         faster_data_load(_data, &qdc4);
-        Detectors[label]->Fill(qdc4, clock_ns);
+        Detectors[label]->Fill(qdc4, clock_sec);
         return make_pair((int)qdc4.q1, 0);
     }
     else if (coder == CRRC4_SPECTRO_TYPE_ALIAS)
     {
         faster_data_load(_data, &spectro_data);
-        Detectors[label]->Fill(spectro_data, clock_ns);
+        Detectors[label]->Fill(spectro_data, clock_sec);
         return make_pair((int)spectro_data.measure, (int)spectro_data.pileup);
     }
     else if (coder == TRAPEZ_SPECTRO_TYPE_ALIAS)
     {
         faster_data_load(_data, &trapez_data);
-        Detectors[label]->Fill(trapez_data, clock_ns);
+        Detectors[label]->Fill(trapez_data, clock_sec);
         return make_pair((int)trapez_data.measure, (int)trapez_data.pileup);
+    }
+    else if (coder == SPECTRO_COUNTER_TYPE_ALIAS)
+    {   
+        faster_data_load(_data, &spectro_scaler);
+        Detectors[label-1000]->Fill(spectro_scaler, clock_sec);
+        return make_pair(-1, -1);
+    }
+    else if (coder == QDC_COUNTER_TYPE_ALIAS)
+    {
+        faster_data_load(_data, &qdc_scaler);
+        Detectors[label-1000]->Fill(qdc_scaler, clock_sec);
+        return make_pair(-1, -1);
     }
     else
     {
@@ -438,7 +452,6 @@ pair<int, int> GetChannel(faster_data_p _data)
 
 int Filling()
 {
-
     if (coder == GROUP_TYPE_ALIAS)
     {
         lsize = faster_data_load(_data, group_buffer);

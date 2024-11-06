@@ -1,1 +1,4 @@
 *.o: 
+script.sh
+sample2021.pid
+Range_Input2021.txt

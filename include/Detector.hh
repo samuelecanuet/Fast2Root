@@ -46,12 +46,17 @@ class Detector
     Detector(string Name, int Lable, int Coder, TFile* file, double TOTAL_TIME);
     ~Detector();
 
-    virtual void Fill(qdc_x1 value, int Time);
-    virtual void Fill(qdc_x2 value, int Time);
-    virtual void Fill(qdc_x3 value, int Time);
-    virtual void Fill(qdc_x4 value, int Time);
-    virtual void Fill(crrc4_spectro value, int Time);
-    virtual void Fill(trapez_spectro value, int Time);
+    // data
+    virtual void Fill(qdc_x1 value, double Time);
+    virtual void Fill(qdc_x2 value, double Time);
+    virtual void Fill(qdc_x3 value, double Time);
+    virtual void Fill(qdc_x4 value, double Time);
+    virtual void Fill(crrc4_spectro value, double Time);
+    virtual void Fill(trapez_spectro value, double Time);
+
+    //scaler
+    virtual void Fill(spectro_counter value, double Time);
+    virtual void Fill(qdc_counter value, double Time);
 
     virtual void Write();
     int SetRangesFromFile();

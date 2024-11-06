@@ -41,6 +41,9 @@ At the end you have a ROOT file in the .fast file directory.
  - Channel/Time
  - Channel/Saturated *(if supported by the coder)*
  - Channel/PileUp *(if supported by the coder)*
+ - Rate SENT
+ - Rate TRIG
+ - Rate CALC *(if supported by the coder)*
 
 ### Tree
 You have 2 TTrees, one for ungrouped data and one for grouped data.
@@ -73,6 +76,7 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
 - v2.2 Support multifast files
 - v2.3 Writing recorded Start/Stop time in the ouput ROOT file
 - v2.4 Saving PileUp tag from Spectro coders
+- v2.5 Saving QDC and SPECTRO counter
 
 ## AUTOR
 *Samuel Lecanuet lp2iB*
