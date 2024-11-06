@@ -40,3 +40,24 @@ void F2RSuccess(const string& message) {
 void F2RSuccess(const char *message) {
     cout << GREEN << "<SUCCESS> " << message << RESET << endl;
 }
+
+void ProgressCounter(int cEntry, int TotalEntries, string Prefix)
+{
+    cout << BLUE
+         << "<PROGRESS>"
+         << "\r" << Prefix << " : "
+         << cEntry
+         << " / "
+         << TotalEntries
+         << flush;
+
+    if (cEntry == TotalEntries-1)
+    {
+        cout << BLUE
+             << "<PROGRESS>"
+             << "\r" << Prefix << " : "
+             << "Completed"
+             << RESET
+             << endl;
+    }
+}

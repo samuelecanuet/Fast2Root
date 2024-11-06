@@ -533,4 +533,30 @@ bool FolderExists(const string &folderPath)
     }
 }
 
+int FindMaxSubRun(string fast_filename_raw)
+{
+    int max_subrun = 0;
+    size_t found = fast_filename_raw.rfind("_");
+    string extracted = fast_filename_raw.substr(found + 1, 4);
+    int subrun_number = stoi(extracted);
+    string filename_base = fast_filename_raw.substr(0, found);
+
+    size_t found_filename = fast_filename_raw.rfind("/");
+    string fast_filename_short = fast_filename_raw.substr(0, found_filename);
+
+    faster_file_reader_p readerr = faster_file_reader_open(fast_filename_raw.c_str());
+    while (readerr != 0)
+    {
+        faster_file_reader_close(readerr);
+        subrun_number++;
+        stringstream ss;
+        ss << setw(4) << setfill('0') << subrun_number;
+        fast_filename_raw = filename_base + "_" + ss.str() + ".fast";
+        readerr = faster_file_reader_open(fast_filename_raw.c_str());
+    }
+    faster_file_reader_close(readerr);   
+
+    return subrun_number;
+}
+
 #endif

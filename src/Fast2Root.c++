@@ -117,6 +117,8 @@ int main(int argc, char **argv)
   Tree_Group->Branch("Signal", &signal_vec);
   #endif
 
+  int max_subrun = FindMaxSubRun(fast_filename_raw);
+
   ///////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////// READ FAST FILE ////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +137,7 @@ int main(int argc, char **argv)
   
   while (reader != 0)
   {
-    F2RInfo("SubFast file : " + to_string(subrun_number));
+    ProgressCounter(subrun_number, max_subrun, "SubFast file");
 
     while ((_data = faster_file_reader_next(reader)) != NULL)
     {    

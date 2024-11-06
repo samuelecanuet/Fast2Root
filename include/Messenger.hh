@@ -25,4 +25,6 @@ void F2RInfo(const char *message);
 void F2RSuccess(const string& message);
 void F2RSuccess(const char *message);
 
+void ProgressCounter(int cEntry, int TotalEntries, string Prefix = "");
+
 #endif

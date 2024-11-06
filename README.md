@@ -72,11 +72,13 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
 
 ## Version
 - v2.0 Basic Reader with QDC and CRRC4 implemented
-- v2.1 Adding TRAPEZ
-- v2.2 Support multifast files
-- v2.3 Writing recorded Start/Stop time in the ouput ROOT file
-- v2.4 Saving PileUp tag from Spectro coders
-- v2.5 Saving QDC and SPECTRO counter
+    - v2.1 Adding TRAPEZ
+    - v2.2 Support multifast files
+    - v2.3 Writing recorded Start/Stop time in the ouput ROOT file
+    - v2.4 Saving PileUp tag from Spectro coders
+    - v2.5 Saving QDC and SPECTRO counter
+        - v2.5.1 Progress counter for subfile reading 
+
 
 ## AUTOR
 *Samuel Lecanuet lp2iB*
