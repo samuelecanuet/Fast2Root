@@ -44,8 +44,9 @@ void F2RSuccess(const char *message) {
 void ProgressCounter(int cEntry, int TotalEntries, string Prefix)
 {
     cout << BLUE
+         << "\r"
          << "<PROGRESS>"
-         << "\r" << Prefix << " : "
+         << Prefix << " : "
          << cEntry
          << " / "
          << TotalEntries
@@ -54,8 +55,9 @@ void ProgressCounter(int cEntry, int TotalEntries, string Prefix)
     if (cEntry == TotalEntries-1)
     {
         cout << BLUE
+             << "\r"
              << "<PROGRESS>"
-             << "\r" << Prefix << " : "
+             << Prefix << " : "
              << "Completed"
              << RESET
              << endl;
