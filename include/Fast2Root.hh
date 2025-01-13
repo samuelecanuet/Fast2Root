@@ -66,6 +66,8 @@ double Channel;
 int PileUp;
 double Time;
 int Label;
+bool FLAG_MISS = false;
+int MISS_COUNTER = 0;
 
 #ifdef USE_SIGNAL_DICT
 vector<Signal> signal_vec;
@@ -452,6 +454,22 @@ pair<int, int> GetChannel(faster_data_p _data)
 
 int Filling()
 {
+    if (coder == MISSING_TYPE_ALIAS)
+    {
+        MISS_COUNTER += 1;
+        // F2RWarning("Missing data n°" + to_string(MISS_COUNTER) + " on " + to_string(label));
+    }
+    else if (coder == MISSED_TYPE_ALIAS)
+    {
+        MISS_COUNTER -= 1;
+        // F2RSuccess("Missed data n°" + to_string(MISS_COUNTER) + " on " + to_string(label));
+    }
+
+    if (MISS_COUNTER != 0)
+    {
+        return 0;
+    }
+
     if (coder == GROUP_TYPE_ALIAS)
     {
         lsize = faster_data_load(_data, group_buffer);
