@@ -31,7 +31,7 @@ Fast2Root <path/filename_0001.fast> -o <path_ROOT_Output>
 ```
 
 ## Result
-At the end you have a ROOT file in the .fast file directory. 
+At the end you have a ROOT file in the .fast file directory or the indicated directory. 
 
 ### Pre-analysed histograms for each channel:
  - Channel
@@ -66,6 +66,8 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
     - *Grouped Tree*
         - *vector\<Signal>* (Channel, Label, Time, PileUp)
 
+### Metadata information
+- All detector information in the .setup file are written in a *Properties* TDirectory for each detectors.
 
 ## TODO
 - Include all the faster data type
