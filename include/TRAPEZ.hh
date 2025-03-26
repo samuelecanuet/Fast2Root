@@ -4,7 +4,7 @@ using namespace std;
 class TRAPEZ : public Detector
 {
     public: 
-    TRAPEZ(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME);
+    TRAPEZ(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME, string setupFile);
 
     void Fill(trapez_spectro value, double Time) override;
     void Fill(spectro_counter value, double Time) override;
@@ -26,5 +26,7 @@ class TRAPEZ : public Detector
     TH1D* DiffScalerTrigTime;
     TH1D* DiffScalerSentTime;
     TH1D* DiffScalerCalcTime;
+
+    // string SetupFileName;
 
 };

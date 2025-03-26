@@ -1,9 +1,8 @@
 #include "QDC.hh"
 
-QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : Detector(Name, Label, Coder, file, TOTAL_TIME)
+QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME, string setupFile) : Detector(Name, Label, Coder, file, TOTAL_TIME, setupFile)
 {
     SetRangesFromFile();
-
     int bin_time = 10000; 
 
     if (Coder == QDC_X1_TYPE_ALIAS)
@@ -31,6 +30,8 @@ QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : De
     DiffScalerSentTime = new TH1D((Name  + "_DiffScalerSentTime").c_str(), (Name  + "_DiffScalerSentTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     DiffScalerCalcTime = new TH1D((Name  + "_DiffScalerCalcTime").c_str(), (Name  + "_DiffScalerCalcTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     Scaler = new TH1D((Name  + "_Scaler").c_str(), (Name  + "_Scaler").c_str(), 2, 0, 2);
+
+    WriteSetupPropreties(Name, setupFile);
 }
 
 void QDC::Fill(qdc_x1 value, double time)
@@ -109,6 +110,7 @@ void QDC::Fill(qdc_counter value, double time)
 
 void QDC::Write()
 {
+    
     DetectorDir->cd();
     for (int i = 0; i < QDC_NB; i++)
     {

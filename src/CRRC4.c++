@@ -1,9 +1,9 @@
 #include "CRRC4.hh"
 
-CRRC4::CRRC4(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) : Detector(Name, Label, Coder, file, TOTAL_TIME)
+CRRC4::CRRC4(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME, string setupFile) : 
+    Detector(Name, Label, Coder, file, TOTAL_TIME, setupFile)
 {
     SetRangesFromFile();
-
     int bin_time = 10000;  
 
     Channel = new TH1D((Name + "_Channel").c_str(), (Name + "_Channel").c_str(), BIN, MIN, MAX);
@@ -19,6 +19,8 @@ CRRC4::CRRC4(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME) 
     DiffScalerSentTime = new TH1D((Name + "_DiffScalerSentTime").c_str(), (Name + "_DiffScalerSentTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     DiffScalerCalcTime = new TH1D((Name + "_DiffScalerCalcTime").c_str(), (Name + "_DiffScalerCalcTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     Scaler = new TH1D((Name + "_Scaler").c_str(), (Name + "_Scaler").c_str(), 3, 0, 3);
+
+    WriteSetupPropreties(Name, setupFile);
 }
 
 void CRRC4::Fill(crrc4_spectro value, double time)

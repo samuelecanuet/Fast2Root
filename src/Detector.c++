@@ -1,7 +1,7 @@
 #include "Detector.hh"
 #include "Messenger.hh"
 
-Detector::Detector(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME)
+Detector::Detector(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME, string setupFile)
 {
     NAME = Name;
     LABEL = Label;
@@ -10,6 +10,7 @@ Detector::Detector(string Name, int Label, int Coder, TFile *file, double TOTAL_
     SetRangesFromFile();
 
     DetectorDir = file->mkdir(NAME.c_str());
+    DetectorPropretiesDir = DetectorDir->mkdir("Propreties");
 
     if (CODER == QDC_X1_TYPE_ALIAS || CODER == QDC_X2_TYPE_ALIAS || CODER == QDC_X3_TYPE_ALIAS || CODER == QDC_X4_TYPE_ALIAS || CODER == CRRC4_SPECTRO_TYPE_ALIAS)
     {
@@ -18,6 +19,7 @@ Detector::Detector(string Name, int Label, int Coder, TFile *file, double TOTAL_
     {
         F2RWarning(("Coder " + string(type_name(Coder)) + " not implemented yet. " + NAME + " will not be saved.").c_str());
     }
+
 }
 
 Detector::~Detector()
@@ -119,4 +121,79 @@ int Detector::GetCoder()
 bool Detector::GetDefaultRanges()
 {
     return DEFAULT_RANGES;
+}
+
+void Detector::WriteSetupPropreties(string name, string filename)
+{
+    DetectorPropretiesDir->cd();
+    ifstream file(filename);
+    string line;
+
+    bool DetectorFound = false;
+    int line_counter = 0;
+    int start_line = 0;
+    
+    if (file.is_open())
+    {
+        while (getline(file, line))
+        {
+            line_counter += 1;
+            if (line.find("*-*") != string::npos)
+            {
+                start_line = line_counter;
+            }
+            else if (line.find("DSP_Label") != string::npos)
+            {
+                istringstream iss(line);
+                string token, equal, value;
+                iss >> token >> equal >> value;
+
+                if (value == to_string(LABEL))
+                {
+                    break;
+                }
+            }
+        }
+
+        // return to first line
+        file.clear();
+        file.seekg(0, ios::beg);
+
+        line_counter = 0;
+
+        while (getline(file, line))
+        {
+            if (line_counter == start_line)
+            {
+                DetectorFound = true;
+            }
+
+            if (DetectorFound)
+            {
+                DetectorPropretiesDir->cd();
+                istringstream iss(line);
+                string token, equal, value;
+                iss >> token >> equal >> value;
+
+                // avoid dummy lines
+                if (equal != "=")
+                    continue;
+                
+                TNamed *prop = new TNamed(token.c_str(), value.c_str());
+                prop->Write();
+
+                // end of taking data
+                if (token == "State_Enabled")
+                    break;
+                
+            }
+
+            line_counter += 1;
+        }
+    }
+    else
+    {
+        F2RError("Impossible to open Setup file");
+        exit(0);
+    }
 }

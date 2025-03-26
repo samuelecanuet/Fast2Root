@@ -4,7 +4,7 @@ using namespace std;
 class CRRC4 : public Detector
 {
     public: 
-    CRRC4(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME);
+    CRRC4(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME, string setupFile);
 
     void Fill(crrc4_spectro value, double Time) override;
     void Fill(spectro_counter value, double Time) override;
@@ -26,4 +26,6 @@ class CRRC4 : public Detector
     TH1D* DiffScalerTrigTime;
     TH1D* DiffScalerSentTime;
     TH1D* DiffScalerCalcTime;
+
+    // string SetupFileName;
 };

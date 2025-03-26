@@ -79,6 +79,7 @@ You have 2 TTrees, one for ungrouped data and one for grouped data.
     - v2.5 Saving QDC and SPECTRO counter
         - v2.5.1 Progress counter for subfile reading 
     - v2.6 Excluding data between *MISSING* and *MISSED* flags
+    - v2.7 Including meta data from .setup for each detectors in the final ROOT file
 
 
 ## AUTOR

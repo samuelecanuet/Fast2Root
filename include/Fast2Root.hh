@@ -264,19 +264,19 @@ map<string, ChannelInfo> InitDetectors(const string &filePath)
 
         if (pair.second.coder == QDC_X1_TYPE_ALIAS || pair.second.coder == QDC_X2_TYPE_ALIAS || pair.second.coder == QDC_X3_TYPE_ALIAS || pair.second.coder == QDC_X4_TYPE_ALIAS || pair.second.coder == QDC_COUNTER_TYPE_ALIAS)
         {
-            Detectors[pair.second.label] = new QDC(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+            Detectors[pair.second.label] = new QDC(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME, setupFile);
         }
         else if (pair.second.coder == CRRC4_SPECTRO_TYPE_ALIAS || pair.second.coder == SPECTRO_COUNTER_TYPE_ALIAS)
         {
-            Detectors[pair.second.label] = new CRRC4(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+            Detectors[pair.second.label] = new CRRC4(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME, setupFile);
         }
         else if (pair.second.coder == TRAPEZ_SPECTRO_TYPE_ALIAS || pair.second.coder == SPECTRO_COUNTER_TYPE_ALIAS)
         {
-            Detectors[pair.second.label] = new TRAPEZ(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+            Detectors[pair.second.label] = new TRAPEZ(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME, setupFile);
         }
         else
         {
-            Detectors[pair.second.label] = new Detector(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME);
+            Detectors[pair.second.label] = new Detector(pair.second.name, pair.second.label, pair.second.coder, ROOTFile, TOTAL_TIME, setupFile);
         }
 
         if (Detectors[pair.second.label]->GetDefaultRanges())
@@ -443,7 +443,7 @@ pair<int, int> GetChannel(faster_data_p _data)
     }
     else
     {
-        if (!Coder_Not_Implemented[coder])
+        if (!Coder_Not_Implemented[coder] && coder != MISSING_TYPE_ALIAS && coder != MISSED_TYPE_ALIAS)
         {
             F2RWarning(Form(("Coder " + string(type_name(coder)) + " not implemented yet").c_str()));
             Coder_Not_Implemented[coder] = true;
@@ -465,7 +465,7 @@ int Filling()
         // F2RSuccess("Missed data n°" + to_string(MISS_COUNTER) + " on " + to_string(label));
     }
 
-    if (MISS_COUNTER != 0)
+    if (MISS_COUNTER > 0)
     {
         return 0;
     }
@@ -474,6 +474,7 @@ int Filling()
     {
         lsize = faster_data_load(_data, group_buffer);
         group_reader = faster_buffer_reader_open(group_buffer, lsize);
+
         while ((_data = faster_buffer_reader_next(group_reader)) != NULL)
         {
             coder = faster_data_type_alias(_data);
@@ -487,7 +488,15 @@ int Filling()
                 continue;
 
 #ifdef USE_SIGNAL_DICT
-            signal_vec.push_back(Signal(label, clock_ns, channel, pileup));
+            // signal_vec.push_back(Signal(label, clock_ns, channel, pileup));
+            if (coder == CRRC4_SPECTRO_TYPE_ALIAS)
+            {
+                faster_data_load(_data, &spectro_data);
+                signal_vec.push_back(Signal(label, clock_ns, channel, pileup, crrc4_spectro_delta_t_ns(spectro_data)));
+            }
+            else{
+                signal_vec.push_back(Signal(label, clock_ns, channel, pileup));
+            }
 #endif
 
 #ifndef USE_SIGNAL_DICT

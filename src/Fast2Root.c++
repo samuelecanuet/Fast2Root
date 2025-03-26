@@ -144,7 +144,10 @@ int main(int argc, char **argv)
       coder = faster_data_type_alias(_data);
       label = faster_data_label(_data);
       clock_ns = faster_data_clock_ns(_data);
+
       Filling();
+
+      
     }
     faster_file_reader_close(reader);
     subrun_number++;

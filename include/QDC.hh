@@ -4,7 +4,7 @@ using namespace std;
 class QDC : public Detector
 {
     public: 
-    QDC(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME);
+    QDC(string Name, int Label, int Coder, TFile* file, double TOTAL_TIME, string setupFile);
 
     void Fill(qdc_x1 value, double Time) override;
     void Fill(qdc_x2 value, double Time) override;

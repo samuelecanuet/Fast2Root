@@ -43,7 +43,7 @@ using namespace std;
 class Detector
 {
     public: 
-    Detector(string Name, int Lable, int Coder, TFile* file, double TOTAL_TIME);
+    Detector(string Name, int Lable, int Coder, TFile* file, double TOTAL_TIME, string setupFile);
     ~Detector();
 
     // data
@@ -60,6 +60,7 @@ class Detector
 
     virtual void Write();
     int SetRangesFromFile();
+    void WriteSetupPropreties(string, string);
 
     string GetName();
     int GetLabel();
@@ -71,7 +72,8 @@ class Detector
     int LABEL;
     int CODER;
     tuple<int, int, int> Ranges;
-    bool DEFAULT_RANGES = false;
+    bool DEFAULT_RANGES = false;    
+    // string SetupFileName;
 
     int BIN;
     double MIN;
@@ -79,6 +81,7 @@ class Detector
 
 
     TDirectory *DetectorDir;
+    TDirectory *DetectorPropretiesDir;
 
 };
 

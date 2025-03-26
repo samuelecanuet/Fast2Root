@@ -10,21 +10,21 @@ do
 done
 
 #for 32Ar thick
-# Runs=("075" "076")
+Runs=("075" "076")
 
-# for run in "${Runs[@]}"
-# do
-#     Fast2Root ../../../../../run/media/local1/Disque_Dur/2024_DATA/DETECTOR_DATA/run_${run}_multifast_32Ar.fast/run_${run}_multifast_32Ar_0001.fast -o ../../../../../../mnt/hgfs/shared-2/2024_DATA/DETECTOR_DATA/ROOT/
-# done
+for run in "${Runs[@]}"
+do
+    Fast2Root ../../../../../run/media/local1/Disque_Dur/2024_DATA/DETECTOR_DATA/run_${run}_multifast_32Ar.fast/run_${run}_multifast_32Ar_0001.fast -o ../../../../../../mnt/hgfs/shared-2/2024_DATA/DETECTOR_DATA/ROOT/
+done
 
 
-# #for 33Ar
-# Runs=("078")
+#for 33Ar
+Runs=("078")
 
-# for run in "${Runs[@]}"
-# do
-#     Fast2Root ../../../../../run/media/local1/Disque_Dur/2024_DATA/DETECTOR_DATA/run_${run}_multifast_33Ar.fast/run_${run}_multifast_33Ar_0001.fast -o ../../../../../../mnt/hgfs/shared-2/2024_DATA/DETECTOR_DATA/ROOT/
-# done
+for run in "${Runs[@]}"
+do
+    Fast2Root ../../../../../run/media/local1/Disque_Dur/2024_DATA/DETECTOR_DATA/run_${run}_multifast_33Ar.fast/run_${run}_multifast_33Ar_0001.fast -o ../../../../../../mnt/hgfs/shared-2/2024_DATA/DETECTOR_DATA/ROOT/
+done
 
 
 
