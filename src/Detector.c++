@@ -138,7 +138,7 @@ void Detector::WriteSetupPropreties(string name, string filename)
         while (getline(file, line))
         {
             line_counter += 1;
-            if (line.find("*-*") != string::npos)
+            if (line.find("Channel_Enabled") != string::npos)
             {
                 start_line = line_counter;
             }
@@ -181,6 +181,21 @@ void Detector::WriteSetupPropreties(string name, string filename)
                 
                 TNamed *prop = new TNamed(token.c_str(), value.c_str());
                 prop->Write();
+
+                if (token == "DSP_Q1_Begin")
+                    QDC1Range = make_pair(stod(value), 0);
+                if (token == "DSP_Q1_End")
+                    QDC1Range.second = stod(value);
+                if (token == "DSP_Q2_Begin")
+                    QDC2Range = make_pair(stod(value), 0);
+                if (token == "DSP_Q2_End")
+                    QDC2Range.second = stod(value);
+                if (token == "DSP_Q3_Begin")
+                    QDC3Range = make_pair(stod(value), 0);
+                if (token == "DSP_Q3_End")
+                    QDC3Range.second = stod(value);
+                if (token == "DSP_Q4_Begin")
+                    QDC4Range = make_pair(stod(value), 0);
 
                 // end of taking data
                 if (token == "State_Enabled")

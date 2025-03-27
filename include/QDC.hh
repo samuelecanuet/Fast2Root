@@ -20,10 +20,12 @@ class QDC : public Detector
     TH1D *Saturated[4];
     TH2D *ChannelTime[4];
     TH2D *ChannelSaturated[4];
+    TH2D *ChannelQDC1QDC2;
 
     TH1D *Scaler;
     int last_scalercalc = 0;
     int last_scalersent = 0;
     TH1D* DiffScalerCalcTime;
     TH1D* DiffScalerSentTime;
+
 };

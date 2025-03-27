@@ -3,6 +3,8 @@
 QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME, string setupFile) : Detector(Name, Label, Coder, file, TOTAL_TIME, setupFile)
 {
     SetRangesFromFile();
+    WriteSetupPropreties(Name, setupFile);
+
     int bin_time = 10000; 
 
     if (Coder == QDC_X1_TYPE_ALIAS)
@@ -27,11 +29,18 @@ QDC::QDC(string Name, int Label, int Coder, TFile *file, double TOTAL_TIME, stri
         ChannelSaturated[i] = new TH2D((Name + "_QDC" + to_string(i + 1) + "_ChannelSaturated").c_str(), (Name + "_QDC" + to_string(i + 1) + "_ChannelSaturated").c_str(), bin_time / 10, 0, TOTAL_TIME, BIN, MIN, MAX);
     }
 
+    if (QDC_NB > 1)
+    {
+        ChannelQDC1QDC2 = new TH2D((Name + "_ChannelQDC1QDC2").c_str(), (Name + "_ChannelQDC1QDC2").c_str(), BIN/10, MIN, MAX, BIN/10, -MAX, MAX);
+        ChannelQDC1QDC2->GetXaxis()->SetTitle(("QDC1 (" + to_string(int(QDC1Range.first)) + "ns : " + to_string(int(QDC1Range.second)) + "ns) [Channel]").c_str());
+        ChannelQDC1QDC2->GetYaxis()->SetTitle(("QDC2 (" + to_string(int(QDC2Range.first)) + "ns : " + to_string(int(QDC2Range.second)) + "ns) [Channel]").c_str());
+    }
+
     DiffScalerSentTime = new TH1D((Name  + "_DiffScalerSentTime").c_str(), (Name  + "_DiffScalerSentTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     DiffScalerCalcTime = new TH1D((Name  + "_DiffScalerCalcTime").c_str(), (Name  + "_DiffScalerCalcTime").c_str(), TOTAL_TIME, 0, TOTAL_TIME);
     Scaler = new TH1D((Name  + "_Scaler").c_str(), (Name  + "_Scaler").c_str(), 2, 0, 2);
 
-    WriteSetupPropreties(Name, setupFile);
+    
 }
 
 void QDC::Fill(qdc_x1 value, double time)
@@ -55,6 +64,9 @@ void QDC::Fill(qdc_x2 value, double time)
     ChannelTime[1]->Fill(time, value.q2);
     ChannelSaturated[0]->Fill(time, value.q1_saturated);
     ChannelSaturated[1]->Fill(time, value.q2_saturated);
+
+    if (value.q1 != 0)
+        ChannelQDC1QDC2->Fill(value.q1, (double)value.q2);
 }
 
 void QDC::Fill(qdc_x3 value, double time)
@@ -123,6 +135,7 @@ void QDC::Write()
     }
 
     DetectorDir->cd();
+    ChannelQDC1QDC2->Write();
     DiffScalerCalcTime->Write();
     DiffScalerSentTime->Write();
     Scaler->SetBinContent(1, DiffScalerCalcTime->Integral());

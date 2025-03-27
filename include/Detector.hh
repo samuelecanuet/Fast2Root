@@ -79,9 +79,13 @@ class Detector
     double MIN;
     double MAX;
 
-
     TDirectory *DetectorDir;
     TDirectory *DetectorPropretiesDir;
+
+    pair<double, double> QDC1Range;
+    pair<double, double> QDC2Range;
+    pair<double, double> QDC3Range;
+    pair<double, double> QDC4Range;
 
 };
 
